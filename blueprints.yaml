@@ -1,0 +1,29 @@
+name: Data Manager
+version: 0.1
+description: Adds an administration panel to visualize the data
+icon: empire
+author:
+  name: Team Grav
+  email: devs@getgrav.org
+  url: http://getgrav.org
+homepage: https://github.com/getgrav/grav-plugin-data-manager
+keywords: admin, plugin, manager, panel, data
+bugs: https://github.com/getgrav/grav-plugin-data-manager/issues
+license: MIT
+
+dependencies:
+  - admin
+
+form:
+  validation: loose
+  fields:
+    enabled:
+      type: hidden
+      label: Plugin status
+      highlight: 1
+      default: 0
+      options:
+        1: Enabled
+        0: Disabled
+      validate:
+        type: bool
