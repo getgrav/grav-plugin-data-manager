@@ -111,7 +111,7 @@ class DataManagerPlugin extends Plugin
     private function getFileContentFromRoute($type, $fileRoute) {
 
         //Single item details
-        $fileInstance = File::instance(DATA_DIR . $type . '/' . $fileRoute .  $this->config->get('plugins.data.types.' . $type . '.file_extension', '.txt'));
+        $fileInstance = File::instance(DATA_DIR . $type . '/' . $fileRoute .  $this->config->get('plugins.data-manager.types.' . $type . '.file_extension', '.txt'));
 
         if (!$fileInstance->content()) {
             //Item not found

@@ -1,12 +1,12 @@
 <h1>
-    {{ config.plugins.data.types[type].list.title ?: type|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu }}
+    {{ config.plugins['data-manager'].types[type].list.title ?: type|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu }}
 </h1>
 <div class="row">
-    {% if config.plugins.data.types[type].list.columns %}
+    {% if config.plugins['data-manager'].types[type].list.columns %}
         <table>
             <thead>
                 <tr>
-                    {% for column in config.plugins.data.types[type].list.columns %}
+                    {% for column in config.plugins['data-manager'].types[type].list.columns %}
                         <th>{{ column.label }}</th>
                     {% endfor %}
                 </tr>
@@ -14,7 +14,7 @@
             <tbody>
                 {% for item in grav.twig.items %}
                     <tr>
-                        {% for column in config.plugins.data.types[type].list.columns %}
+                        {% for column in config.plugins['data-manager'].types[type].list.columns %}
                             <td>
                                 <a href="{{ type }}/{{ item.route }}">
                                     {% if column.field is iterable %}
