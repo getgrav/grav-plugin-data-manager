@@ -2,6 +2,6 @@
 title: Data Manager
 
 access:
-    admin.data: true
+    admin.data-manager: true
     admin.super: true
 ---
