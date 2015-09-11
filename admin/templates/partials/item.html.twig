@@ -2,31 +2,31 @@
     <ul>
         {% for key, item in elements %}
             {% if item is iterable %}
-                <li><strong>{{key|capitalize}}</strong>:</li>
+                <li><strong>{{key|e|capitalize}}</strong>:</li>
                 {{ _self.loop(item) }}
             {% else %}
-                <li><strong>{{key|capitalize}}</strong>: {{ item }}</li>
+                <li><strong>{{key|e|capitalize}}</strong>: {{ item|e }}</li>
             {% endif %}
         {% endfor %}
     </ul>
 {% endmacro %}
 
 <h1>
-    {{ config.plugins['data-manager'].types[type].item.title ?: type|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu }}
+    {{ config.plugins['data-manager'].types[type].item.title ?: type|e|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu }}
 </h1>
 <ul>
     {% if config.plugins['data-manager'].types[type].item.fields %}
         {% for key, type in config.plugins['data-manager'].types[type].item.fields %}
             <li class="page-item">
                 <div class="row">
-                    <strong>{{type.name|capitalize}}</strong>:
+                    <strong>{{type.name|e|capitalize}}</strong>:
 
                     {% set item = grav.twig.itemData[key]|cast_to_array %}
 
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
                     {% else %}
-                        {{ item }}
+                        {{ item|e }}
                     {% endif %}
                 </div>
             </li>
@@ -42,7 +42,7 @@
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
                     {% else %}
-                        {{ item }}
+                        {{ item|e }}
                     {% endif %}
                 </div>
             </li>

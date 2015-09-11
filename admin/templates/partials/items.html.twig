@@ -1,5 +1,5 @@
 <h1>
-    {{ config.plugins['data-manager'].types[type].list.title ?: type|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu }}
+    {{ config.plugins['data-manager'].types[type].list.title ?: type|e|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu }}
 </h1>
 <div class="row">
     {% if config.plugins['data-manager'].types[type].list.columns %}
@@ -7,7 +7,7 @@
             <thead>
                 <tr>
                     {% for column in config.plugins['data-manager'].types[type].list.columns %}
-                        <th>{{ column.label }}</th>
+                        <th>{{ column.label|e }}</th>
                     {% endfor %}
                 </tr>
             </thead>
@@ -22,9 +22,9 @@
                                         {% for field in column.field %}
                                             {% set value = value[field] %}
                                         {% endfor %}
-                                        {{ value }}
+                                        {{ value|e }}
                                     {% else %}
-                                        {{ item.content[column.field] }}
+                                        {{ item.content[column.field]|e }}
                                     {% endif %}
                                 </a>
                             </td>
@@ -38,7 +38,7 @@
            {% for item in grav.twig.items %}
                <li class="page-item">
                    <div class="row">
-                       <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.route }}</a>
+                       <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.route|e }}</a>
                    </div>
                </li>
            {% endfor %}
