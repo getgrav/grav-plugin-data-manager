@@ -85,6 +85,9 @@ class DataManagerPlugin extends Plugin
                 $types = [];
                 $entry = null;
 
+                //Find data types excluded by plugins
+                $this->grav->fireEvent('onDataTypeExcludeFromDataManagerPluginHook');
+
                 $typesIterator = new \FilesystemIterator(DATA_DIR, \FilesystemIterator::SKIP_DOTS);
                 foreach ($typesIterator as $type) {
                     $typeName = $type->getFilename();
@@ -97,7 +100,13 @@ class DataManagerPlugin extends Plugin
                         $count++;
                     }
 
-                    $types[$typeName] = $count;
+                    if (isset($this->grav['admin']->dataTypesExcludedFromDataManagerPlugin)) {
+                        if (!in_array($typeName, $this->grav['admin']->dataTypesExcludedFromDataManagerPlugin)) {
+                            $types[$typeName] = $count;
+                        }
+                    } else {
+                        $types[$typeName] = $count;
+                    }
                 }
 
                 $this->grav['twig']->types = $types;

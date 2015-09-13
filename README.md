@@ -168,6 +168,27 @@ By doing this, you can build plugins that
 
 You can register the templates in the admin-side and put them in your plugin templates folder under `partials/data-manager/[typename]/item.html.twig` and/or `partials/data-manager/[typename]/items.html.twig`.
 
+# Programmatically exclude a data folder from the Data Manager
+
+Say you are developing a plugin that stores in the data/ folder, and you want to create your own admin interface to show the data. No problem! You can instruct the Data Manager plugin to ignore your data type (data/ subfolder).
+
+Just listen for the `onDataTypeExcludeFromDataManagerPluginHook` event
+
+```php
+$this->enable([
+    'onDataTypeExcludeFromDataManagerPluginHook' => ['onDataTypeExcludeFromDataManagerPluginHook', 0],
+]);
+```
+
+and add the data type you want to exclude by adding it to a property of the Admin Plugin:
+
+```php
+ public function onDataTypeExcludeFromDataManagerPluginHook()
+ {
+     $this->grav['admin']->dataTypesExcludedFromDataManagerPlugin[] = 'comments';
+ }
+ ```
+
 # Future improvements
 
 This is a first revision of the plugin.
