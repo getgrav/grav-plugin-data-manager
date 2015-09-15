@@ -5,7 +5,7 @@
                 <li><strong>{{key|e|capitalize}}</strong>:</li>
                 {{ _self.loop(item) }}
             {% else %}
-                <li><strong>{{key|e|capitalize}}</strong>: {{ item|e }}</li>
+                <li><strong>{{key|e|capitalize}}</strong>: {{ item|striptags('<br>')|raw }}</li>
             {% endif %}
         {% endfor %}
     </ul>
@@ -26,7 +26,7 @@
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
                     {% else %}
-                        {{ item|e }}
+                        {{ item|striptags('<br>')|raw }}
                     {% endif %}
                 </div>
             </li>
@@ -42,7 +42,7 @@
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
                     {% else %}
-                        {{ item|e }}
+                        {{ item|striptags('<br>')|raw }}
                     {% endif %}
                 </div>
             </li>
