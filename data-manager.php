@@ -143,7 +143,7 @@ class DataManagerPlugin extends Plugin
      */
     public function onAdminTemplateNavPluginHook()
     {
-        $this->grav['twig']->plugins_hooked_nav['PLUGIN_DATA_MANAGER.DATA_MANAGER'] = ['route' => $this->route, 'icon' => 'fa-file-text'];
+        $this->grav['twig']->plugins_hooked_nav['PLUGIN_DATA_MANAGER.DATA_MANAGER'] = ['route' => $this->route, 'icon' => 'fa-database'];
     }
 
     /**
