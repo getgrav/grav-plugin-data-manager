@@ -65,7 +65,7 @@ form:
             dateformat: Ymd-His-u
             extension: txt
             body: "{% include 'forms/data.txt.twig' %}"
-        - message: Thank you from your feedback!
+        - message: Thank you for your feedback!
 ---
 
 # Nice contact form
@@ -109,7 +109,7 @@ To show in the items list nested content, use an array:
 
 ```yaml
 list:
-  columns:  
+  columns:
     -
       field: ['address', 'email']
       label: Email
