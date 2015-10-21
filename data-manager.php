@@ -27,7 +27,7 @@ class DataManagerPlugin extends Plugin
     }
 
     /**
-     * Enable search only if url matches to the configuration.
+     * Enable only if url matches to the configuration.
      */
     public function onPluginsInitialized()
     {
@@ -35,14 +35,19 @@ class DataManagerPlugin extends Plugin
             return;
         }
 
+        /** @var Uri $uri */
+        $uri = $this->grav['uri'];
+
         $this->enable([
             'onTwigTemplatePaths' => ['onTwigTemplatePaths', 0],
             'onAdminTemplateNavPluginHook' => ['onAdminTemplateNavPluginHook', 0],
             'onTwigExtensions'    => ['onTwigExtensions', 1000],
         ]);
 
-        /** @var Uri $uri */
-        $uri = $this->grav['uri'];
+        if (strpos($uri->path(), $this->config->get('plugins.admin.route') . '/' . $this->route) === false) {
+            return;
+        }
+
         if (isset($uri->paths()[1]) && $uri->paths()[1] == $this->route) {
             $type = null;
             $file = null;
