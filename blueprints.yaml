@@ -18,7 +18,7 @@ form:
   validation: loose
   fields:
     enabled:
-      type: hidden
+      type: toggle
       label: Plugin status
       highlight: 1
       default: 0
