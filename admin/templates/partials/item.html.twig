@@ -21,7 +21,10 @@
                 <div class="row">
                     <strong>{{type.name|e|capitalize}}</strong>:
 
-                    {% set item = grav.twig.itemData[key]|cast_to_array %}
+                    {% set item = grav.twig.itemData[key] %}
+                    {% if is_object(item) %}
+                        {% set item = array(item) %}
+                    {% endif %}
 
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
@@ -37,7 +40,10 @@
                 <div class="row">
                     <strong>{{key|capitalize}}</strong>:
 
-                    {% set item = grav.twig.itemData[key]|cast_to_array %}
+                    {% set item = grav.twig.itemData[key] %}
+                    {% if is_object(item) %}
+                        {% set item = array(item) %}
+                    {% endif %}
 
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
