@@ -1,5 +1,5 @@
 name: Data Manager
-version: 1.0.3
+version: 1.0.4
 description: Adds an administration panel to visualize the data
 icon: database
 author:
@@ -18,12 +18,12 @@ form:
   validation: loose
   fields:
     enabled:
-      type: hidden
-      label: Plugin status
+      type: toggle
+      label: PLUGIN_ADMIN.PLUGIN_STATUS
       highlight: 1
       default: 0
       options:
-        1: Enabled
-        0: Disabled
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
       validate:
         type: bool

@@ -40,8 +40,7 @@ class DataManagerPlugin extends Plugin
 
         $this->enable([
             'onTwigTemplatePaths' => ['onTwigTemplatePaths', 0],
-            'onAdminTemplateNavPluginHook' => ['onAdminTemplateNavPluginHook', 0],
-            'onTwigExtensions'    => ['onTwigExtensions', 1000],
+            'onAdminMenu' => ['onAdminMenu', 0],
         ]);
 
         if (strpos($uri->path(), $this->config->get('plugins.admin.route') . '/' . $this->route) === false) {
@@ -146,17 +145,8 @@ class DataManagerPlugin extends Plugin
     /**
      * Add navigation item to the admin plugin
      */
-    public function onAdminTemplateNavPluginHook()
+    public function onAdminMenu()
     {
         $this->grav['twig']->plugins_hooked_nav['PLUGIN_DATA_MANAGER.DATA_MANAGER'] = ['route' => $this->route, 'icon' => 'fa-database'];
-    }
-
-    /**
-     * Add Twig Extensions
-     */
-    public function onTwigExtensions()
-    {
-        require_once(__DIR__.'/twig/DataTwigExtension.php');
-        $this->grav['twig']->twig->addExtension(new DataTwigExtension());
     }
 }
