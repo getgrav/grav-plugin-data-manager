@@ -63,7 +63,7 @@ form:
         - save:
             fileprefix: contact-
             dateformat: Ymd-His-u
-            extension: txt
+            extension: yaml
             body: "{% include 'forms/data.txt.twig' %}"
         - message: Thank you for your feedback!
 ---
@@ -137,12 +137,12 @@ By default, the single item view lists all the fields found in the file.
 
 ## File extension customization
 
-Usually data is saved in .txt files. You can change that per-type by setting:
+Usually data is saved in .yaml files. You can change that per-type by setting:
 
 ```yaml
 types:
   contactform:
-    file_extension: '.yml'
+    file_extension: '.txt'
 ```
 
 ## Customize the type name
