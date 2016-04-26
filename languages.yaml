@@ -5,3 +5,11 @@ en:
     ITEMS_LIST: Items List
     ITEMS: Items
     ITEM_DETAILS: Item Details
+    
+fr:
+  PLUGIN_DATA_MANAGER:
+    DATA_MANAGER: Gestion des données
+    DATA_TYPES: Types de données
+    ITEMS_LIST: Listes des éléments
+    ITEMS: Éléments
+    ITEM_DETAILS: Détails de l'élément
