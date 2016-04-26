@@ -1,3 +1,9 @@
+# v1.0.5
+## 04/26/2016
+
+1. [](#bugfix)
+	* Default to use `.yaml` data files extension. Also check for `.txt`
+
 # v1.0.4
 ## 02/18/2016
 
