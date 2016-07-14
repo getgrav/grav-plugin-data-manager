@@ -1,3 +1,9 @@
+# v1.0.6
+## 07/14/2016
+
+1. [](#improved)
+	* Added danish language
+
 # v1.0.5
 ## 04/26/2016
 
