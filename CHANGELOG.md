@@ -1,3 +1,9 @@
+# v1.x.x
+## 08/xx/2016
+
+1. [](#improved)
+    * Added Romanian translation
+
 # v1.0.6
 ## 07/14/2016
 
