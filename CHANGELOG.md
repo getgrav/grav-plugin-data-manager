@@ -3,6 +3,8 @@
 
 1. [](#improved)
     * Added Romanian translation
+1. [](#bugfix)
+	* Avoid error if a file is found in the `user/data` folder (fixes `licences.yaml` issue), ignore the file instead
 
 # v1.0.6
 ## 07/14/2016
