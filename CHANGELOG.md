@@ -1,5 +1,5 @@
-# v1.x.x
-## 08/xx/2016
+# v1.0.7
+## 10/24/2016
 
 1. [](#improved)
     * Added Romanian translation
