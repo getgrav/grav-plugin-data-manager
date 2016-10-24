@@ -97,6 +97,10 @@ class DataManagerPlugin extends Plugin
                     $typeName = $type->getFilename();
                     if ($typeName[0] == '.') continue;
 
+                    if (!is_dir(DATA_DIR . $typeName)) {
+                        continue;
+                    }
+
                     $iterator = new \FilesystemIterator(DATA_DIR . $typeName, \FilesystemIterator::SKIP_DOTS);
                     $count = 0;
                     foreach ($iterator as $fileinfo) {
