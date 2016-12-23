@@ -1,3 +1,9 @@
+# v1.0.x
+## xx/xx/2016
+
+1. [](#improved)
+    * Added german translation
+
 # v1.0.7
 ## 10/24/2016
 
