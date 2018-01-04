@@ -12,7 +12,7 @@
 {% endmacro %}
 
 <h1>
-    {{ config.plugins['data-manager'].types[type].item.title ?: type|e|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu }}
+    {{ config.plugins['data-manager'].types[type].name ?: type|e|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu }}
 </h1>
 <ul>
     {% if config.plugins['data-manager'].types[type].item.fields %}
