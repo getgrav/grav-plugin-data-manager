@@ -37,11 +37,6 @@
 
 {% block content %}
 
-    <style>
-    .page-data ul { padding-left: 60px; display: block; list-style-type: square; }
-    .page-data ul li .row { padding-left: 0px }
-    </style>
-
     <div class="page-data">
         {% if mode == 'types' %}
             {% include "partials/types.html.twig" %}
@@ -55,4 +50,5 @@
             {% include ['partials/data-manager/' ~ type ~ '/item.html.twig', 'partials/item.html.twig'] %}
         {% endif %}
     </div>
+
 {% endblock %}
