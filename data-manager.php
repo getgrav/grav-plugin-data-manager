@@ -132,12 +132,15 @@ class DataManagerPlugin extends Plugin
                 $data = array_column($this->grav['twig']->items, 'content');
                 $flat_data = [];
                 foreach ($data as $row) {
-                    foreach ($row as $key => $item) {
-                        if (is_array($item)) {
-                            $row[$key] = 'array';
+                    if (is_array($row)) {
+                        foreach ($row as $key => $item) {
+                            if (is_array($item)) {
+                                $row[$key] = 'array';
+                            }
                         }
+                        $flat_data[] = $row;
                     }
-                    $flat_data[] = $row;
+
                 }
 
                 $csv_data = $this->arrayToCsv($flat_data);
