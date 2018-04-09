@@ -2,17 +2,12 @@
 namespace Grav\Plugin;
 
 use Grav\Common\Filesystem\Folder;
-use Grav\Common\GPM\GPM;
-use Grav\Common\Grav;
-use Grav\Common\Page\Page;
-use Grav\Common\Page\Pages;
+
 use Grav\Common\Plugin;
 use Grav\Common\Uri;
 use Grav\Common\Utils;
 use Grav\Plugin\Admin\Admin;
 use RocketTheme\Toolbox\File\File;
-use RocketTheme\Toolbox\Event\Event;
-use RocketTheme\Toolbox\Session\Session;
 use Symfony\Component\Yaml\Yaml as YamlParser;
 
 class DataManagerPlugin extends Plugin
@@ -85,7 +80,7 @@ class DataManagerPlugin extends Plugin
                     }
                     closedir($handle);
                 }
-                $items = Utils::sortArrayByKey($items, 'route', SORT_DESC, SORT_NATURAL);
+                $items = $this->sortArrayByKey($items, 'route', SORT_DESC, SORT_NATURAL);
 
                 $this->grav['twig']->items = $items;
             } else {
@@ -196,6 +191,33 @@ class DataManagerPlugin extends Plugin
     public function onAdminMenu()
     {
         $this->grav['twig']->plugins_hooked_nav['PLUGIN_DATA_MANAGER.DATA_MANAGER'] = ['route' => $this->route, 'icon' => 'fa-database'];
+    }
+
+    /**
+     * sort a multidimensional array by a key
+     * Local version until Grav 1.4.3 is released
+     *
+     * @param $array
+     * @param $array_key
+     * @param int $direction
+     * @param int $sort_flags
+     * @return array
+     */
+    public function sortArrayByKey($array, $array_key, $direction = SORT_DESC, $sort_flags = SORT_REGULAR )
+    {
+        $output = [];
+
+        if (!is_array($array) || !$array) {
+            return $output;
+        }
+
+        foreach ($array as $key => $row) {
+            $output[$key] = $row[$array_key];
+        }
+
+        array_multisort($output, $direction, $sort_flags, $array);
+
+        return $array;
     }
 
     /**
