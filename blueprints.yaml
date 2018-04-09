@@ -12,7 +12,8 @@ bugs: https://github.com/getgrav/grav-plugin-data-manager/issues
 license: MIT
 
 dependencies:
-  - admin
+  - { name: grav, version: '>=1.4.3' }
+  - { name: admin, version: '>=1.7.4' }
 
 form:
   validation: loose

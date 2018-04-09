@@ -1,7 +1,10 @@
 # v1.0.x
 ## xx/xx/2016
 
+1. [](#new)
+    * Added basic CSV export of data
 1. [](#improved)
+    * Sort files by filename rather than the order they are found in filesystem
     * Added german translation
 
 # v1.0.7

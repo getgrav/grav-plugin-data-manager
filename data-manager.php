@@ -85,6 +85,7 @@ class DataManagerPlugin extends Plugin
                     }
                     closedir($handle);
                 }
+                $items = Utils::sortArrayByKey($items, 'route', SORT_DESC, SORT_NATURAL);
 
                 $this->grav['twig']->items = $items;
             } else {
