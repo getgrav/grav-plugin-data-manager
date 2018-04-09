@@ -1,7 +1,7 @@
 <h1>
     {{ config.plugins['data-manager'].types[type].list.title ?: type|e|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu }}
 </h1>
-<div class="row">
+<div class="">
     {% if config.plugins['data-manager'].types[type].list.columns %}
         <table>
             <thead>
@@ -34,14 +34,15 @@
             </tbody>
         </table>
     {% else %}
-        <ul class="pages-list depth-0">
+        <ul class="">
            {% for item in grav.twig.items %}
-               <li class="page-item">
-                   <div class="row">
-                       <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.route|e }}</a>
-                   </div>
+               <li class="">
+                   <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.route|e }}</a>
                </li>
            {% endfor %}
         </ul>
+        <div class="button-bar danger">
+        <a href="{{ type }}.csv" class="button">Download as CSV</a>
+        </div>
     {% endif %}
 </div>

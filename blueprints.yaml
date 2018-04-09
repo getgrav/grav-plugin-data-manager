@@ -1,5 +1,5 @@
 name: Data Manager
-version: 1.0.7
+version: 1.1.0
 description: Adds an administration panel to visualize the data
 icon: database
 author:
@@ -12,7 +12,7 @@ bugs: https://github.com/getgrav/grav-plugin-data-manager/issues
 license: MIT
 
 dependencies:
-  - admin
+  - { name: admin, version: '>=1.7.4' }
 
 form:
   validation: loose

@@ -1,15 +1,13 @@
 <?php
 namespace Grav\Plugin;
 
-use Grav\Common\GPM\GPM;
-use Grav\Common\Grav;
-use Grav\Common\Page\Page;
-use Grav\Common\Page\Pages;
+use Grav\Common\Filesystem\Folder;
+
 use Grav\Common\Plugin;
 use Grav\Common\Uri;
+use Grav\Common\Utils;
+use Grav\Plugin\Admin\Admin;
 use RocketTheme\Toolbox\File\File;
-use RocketTheme\Toolbox\Event\Event;
-use RocketTheme\Toolbox\Session\Session;
 use Symfony\Component\Yaml\Yaml as YamlParser;
 
 class DataManagerPlugin extends Plugin
@@ -52,10 +50,10 @@ class DataManagerPlugin extends Plugin
             $file = null;
 
             if (isset($uri->paths()[2])) {
-                $type = $uri->paths()[2];
+                $type = basename($uri->paths()[2], '.' . $uri->extension());
             }
             if (isset($uri->paths()[3])) {
-                $file = $uri->paths()[3];
+                $file = basename($uri->paths()[3], '.' . $uri->extension());
             }
 
             if ($file) {
@@ -82,6 +80,7 @@ class DataManagerPlugin extends Plugin
                     }
                     closedir($handle);
                 }
+                $items = $this->sortArrayByKey($items, 'route', SORT_DESC, SORT_NATURAL);
 
                 $this->grav['twig']->items = $items;
             } else {
@@ -120,6 +119,42 @@ class DataManagerPlugin extends Plugin
                 $this->grav['twig']->types = $types;
             }
         }
+
+        // Handle CSV call
+        if ($uri->extension() == 'csv') {
+
+            // Handle "items"
+            if (isset($this->grav['twig']->items)) {
+                $data = array_column($this->grav['twig']->items, 'content');
+                $flat_data = [];
+                foreach ($data as $row) {
+                    if (is_array($row)) {
+                        foreach ($row as $key => $item) {
+                            if (is_array($item)) {
+                                $row[$key] = 'array';
+                            }
+                        }
+                        $flat_data[] = $row;
+                    }
+
+                }
+
+                $csv_data = $this->arrayToCsv($flat_data);
+
+                /** @var File $csv_file */
+                $tmp_dir  = Admin::getTempDir();
+                $tmp_file = uniqid() . '.csv';
+                $tmp      = $tmp_dir . '/data-manager/' . basename($tmp_file);
+
+                Folder::create(dirname($tmp));
+
+                $csv_file = File::instance($tmp_file);
+                $csv_file->save($csv_data);
+                Utils::download($csv_file->filename(), true);
+                exit;
+            }
+
+        }
     }
 
     /**
@@ -156,5 +191,53 @@ class DataManagerPlugin extends Plugin
     public function onAdminMenu()
     {
         $this->grav['twig']->plugins_hooked_nav['PLUGIN_DATA_MANAGER.DATA_MANAGER'] = ['route' => $this->route, 'icon' => 'fa-database'];
+    }
+
+    /**
+     * sort a multidimensional array by a key
+     * Local version until Grav 1.4.3 is released
+     *
+     * @param $array
+     * @param $array_key
+     * @param int $direction
+     * @param int $sort_flags
+     * @return array
+     */
+    public function sortArrayByKey($array, $array_key, $direction = SORT_DESC, $sort_flags = SORT_REGULAR )
+    {
+        $output = [];
+
+        if (!is_array($array) || !$array) {
+            return $output;
+        }
+
+        foreach ($array as $key => $row) {
+            $output[$key] = $row[$array_key];
+        }
+
+        array_multisort($output, $direction, $sort_flags, $array);
+
+        return $array;
+    }
+
+    /**
+     *
+     *
+     * @param array $array
+     * @return null|string
+     */
+    function arrayToCsv(array &$array)
+    {
+        if (count($array) == 0) {
+            return null;
+        }
+        ob_start();
+        $df = fopen("php://output", 'w');
+        fputcsv($df, array_keys(reset($array)));
+        foreach ($array as $row) {
+            fputcsv($df, array_values($row));
+        }
+        fclose($df);
+        return ob_get_clean();
     }
 }
