@@ -1,6 +1,6 @@
 <div class="gpm gpm-themes">
     <h1>
-        {{"PLUGIN_DATA_MANAGER.DATA_TYPES"|e|tu}}
+        {{ "PLUGIN_DATA_MANAGER.DATA_TYPES"|e|tu|raw }}
     </h1>
     <div class="gpm gpm-themes themes card-row grid fixed-blocks pure-g">
         {% for type, count in grav.twig.types %}
@@ -9,7 +9,7 @@
                     <div class="gpm-name">
                         {{ config.plugins['data-manager'].types[type].name|e ?: type|capitalize|e }}
                     </div>
-                    <p>{{ count }} {{"PLUGIN_DATA_MANAGER.ITEMS"|e|tu}}</p>
+                    <p>{{ count }} {{ "PLUGIN_DATA_MANAGER.ITEMS"|e|tu|raw }}</p>
                 </div>
             </a>
         {% endfor %}

@@ -1,14 +1,16 @@
 <?php
 namespace Grav\Plugin;
 
+use Grav\Common\File\CompiledYamlFile;
 use Grav\Common\Filesystem\Folder;
 
 use Grav\Common\Plugin;
+use Grav\Common\Twig\Twig;
 use Grav\Common\Uri;
 use Grav\Common\Utils;
 use Grav\Plugin\Admin\Admin;
 use RocketTheme\Toolbox\File\File;
-use Symfony\Component\Yaml\Yaml as YamlParser;
+use RocketTheme\Toolbox\File\JsonFile;
 
 class DataManagerPlugin extends Plugin
 {
@@ -33,148 +35,211 @@ class DataManagerPlugin extends Plugin
             return;
         }
 
-        /** @var Uri $uri */
-        $uri = $this->grav['uri'];
-
         $this->enable([
+            'onPagesInitialized' => ['onPagesInitialized', 0],
             'onTwigTemplatePaths' => ['onTwigTemplatePaths', 0],
             'onAdminMenu' => ['onAdminMenu', 0],
         ]);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function onPagesInitialized()
+    {
+        /** @var Uri $uri */
+        $uri = $this->grav['uri'];
 
         if (strpos($uri->path(), $this->config->get('plugins.admin.route') . '/' . $this->route) === false) {
             return;
         }
 
-        if (isset($uri->paths()[1]) && $uri->paths()[1] == $this->route) {
-            $type = null;
-            $file = null;
+        /** @var Twig $twig */
+        $twig = $this->grav['twig'];
+        $pathParts = $uri->paths();
+        $extension = '.' . $uri->extension();
 
-            if (isset($uri->paths()[2])) {
-                $type = basename($uri->paths()[2], '.' . $uri->extension());
-            }
-            if (isset($uri->paths()[3])) {
-                $file = basename($uri->paths()[3], '.' . $uri->extension());
+        if (isset($pathParts[1]) && $pathParts[1] === $this->route) {
+            $type = isset($pathParts[2]) ? basename($pathParts[2], '.csv') : null;
+            $file = isset($pathParts[3]) ? $pathParts[3] : null;
+            $ext = $this->getExtension($type, $file);
+            if ($extension && $ext !== $extension) {
+                $filename = $file;
+            } else {
+                $filename = $file;
             }
 
             if ($file) {
-                $fileRoute = $uri->paths()[3];
-
-                /** @var Twig $twig */
-                $twig = $this->grav['twig'];
-                $this->grav['twig']->itemData = $this->getFileContentFromRoute($type, $fileRoute);
-
-            } elseif (isset($uri->paths()[2])) {
-                //List of items of a type
-
-                $items = [];
-                $entry = null;
-                if ($handle = opendir(DATA_DIR . $type)) {
-                    while (false !== ($entry = readdir($handle))) {
-                        if ($entry[0] != "." && $entry != "..") {
-                            $fileRoute = substr($entry, 0, strrpos($entry, '.'));
-                            $items[] = [
-                                'route' => $fileRoute,
-                                'content' => $this->getFileContentFromRoute($type, $fileRoute)
-                            ];
-                        }
-                    }
-                    closedir($handle);
-                }
-                $items = $this->sortArrayByKey($items, 'route', SORT_DESC, SORT_NATURAL);
-
-                $this->grav['twig']->items = $items;
+                // Individual data entry.
+                $twig->itemData = $this->getFileContent($type, $filename);
+            } elseif ($type) {
+                // List of data entries.
+                $twig->items = $this->getDataType($type);
             } else {
-                //Types list
-                $types = [];
-                $entry = null;
-
-                //Find data types excluded by plugins
-                $this->grav->fireEvent('onDataTypeExcludeFromDataManagerPluginHook');
-
-                $typesIterator = new \FilesystemIterator(DATA_DIR, \FilesystemIterator::SKIP_DOTS);
-                foreach ($typesIterator as $type) {
-                    $typeName = $type->getFilename();
-                    if ($typeName[0] == '.') continue;
-
-                    if (!is_dir(DATA_DIR . $typeName)) {
-                        continue;
-                    }
-
-                    $iterator = new \FilesystemIterator(DATA_DIR . $typeName, \FilesystemIterator::SKIP_DOTS);
-                    $count = 0;
-                    foreach ($iterator as $fileinfo) {
-                        if ($fileinfo->getFilename()[0] == '.') continue;
-                        $count++;
-                    }
-
-                    if (isset($this->grav['admin']->dataTypesExcludedFromDataManagerPlugin)) {
-                        if (!in_array($typeName, $this->grav['admin']->dataTypesExcludedFromDataManagerPlugin)) {
-                            $types[$typeName] = $count;
-                        }
-                    } else {
-                        $types[$typeName] = $count;
-                    }
-                }
-
-                $this->grav['twig']->types = $types;
+                // List of data types.
+                $twig->types = $this->getDataTypes();
             }
         }
 
         // Handle CSV call
-        if ($uri->extension() == 'csv') {
+        if (isset($twig->items) && $extension === 'csv') {
 
-            // Handle "items"
-            if (isset($this->grav['twig']->items)) {
-                $data = array_column($this->grav['twig']->items, 'content');
-                $flat_data = [];
-                foreach ($data as $row) {
-                    if (is_array($row)) {
-                        foreach ($row as $key => $item) {
-                            if (is_array($item)) {
-                                $row[$key] = 'array';
-                            }
-                        }
-                        $flat_data[] = $row;
-                    }
+            $data = array_column($twig->items, 'content');
 
-                }
+            $this->downloadCSV($data);
+        }
+    }
 
-                $csv_data = $this->arrayToCsv($flat_data);
+    private function getExtension($type, $filename)
+    {
+        $extension = $this->config->get("plugins.data-manager.types.{$type}.file_extension");
+        if (!$extension) {
+            $pos = strrpos($filename, '.');
+            $extension = $pos ? substr($filename, $pos) : null;
+        }
 
-                /** @var File $csv_file */
-                $tmp_dir  = Admin::getTempDir();
-                $tmp_file = uniqid() . '.csv';
-                $tmp      = $tmp_dir . '/data-manager/' . basename($tmp_file);
+        return $extension;
+    }
 
-                Folder::create(dirname($tmp));
+    /**
+     * Given a data file route, return the file content.
+     *
+     * @param string $type
+     * @param string $filename
+     * @return array|string|null
+     */
+    private function getFileContent($type, $filename)
+    {
+        $extension = $this->getExtension($type, $filename);
 
-                $csv_file = File::instance($tmp_file);
-                $csv_file->save($csv_data);
-                Utils::download($csv_file->filename(), true);
-                exit;
-            }
+        switch ($extension) {
+            case '.txt':
+            case '.yaml':
+                $file = CompiledYamlFile::instance(DATA_DIR . $type . '/' . $filename);
+                break;
+            case '.json':
+                $file = JsonFile::instance(DATA_DIR . $type . '/' . $filename);
+                break;
+            case '.html':
+            default:
+                $file = File::instance(DATA_DIR . $type . '/' . $filename);
+        }
 
+        if (!$file->exists()) {
+            return null;
+        }
+
+        try {
+            return $file->content();
+        } catch (\Exception $e) {
+            return $file->raw();
         }
     }
 
     /**
-     * Given a data file route, return the YAML content already parsed
+     * @param string $type
+     * @return array
      */
-    private function getFileContentFromRoute($type, $fileRoute) {
+    protected function getDataType($type)
+    {
+        $extension = $this->config->get("plugins.data-manager.types.{$type}.file_extension");
 
-        //get .yaml file
-        $fileInstance = File::instance(DATA_DIR . $type . '/' . $fileRoute .  $this->config->get('plugins.data-manager.types.' . $type . '.file_extension', '.yaml'));
+        $items = [];
+        $fileIterator = new \FilesystemIterator(DATA_DIR . $type, \FilesystemIterator::SKIP_DOTS);
+        /** @var \FilesystemIterator $entry */
+        foreach ($fileIterator as $entry) {
+            $file = $entry->getFilename();
+            if (!$entry->isFile() || ($extension && !preg_match('/' . preg_quote($extension, '/') . '$/', $file))) {
+                // Is not file or file extension does not match.
+                continue;
+            }
 
-        if (!$fileInstance->content()) { //try using .txt if not found
-            $fileInstance = File::instance(DATA_DIR . $type . '/' . $fileRoute .  $this->config->get('plugins.data-manager.types.' . $type . '.file_extension', '.txt'));
+            $name = substr($file, 0, strrpos($file, '.'));
+            $items[] = [
+                'name' => $name,
+                'route' => $file,
+                'content' => $this->getFileContent($type, $file)
+            ];
         }
 
-        if (!$fileInstance->content()) {
-            //Item not found
-            return;
+        return $this->sortArrayByKey($items, 'name', SORT_DESC, SORT_NATURAL);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDataTypes()
+    {
+        $types = [];
+        $entry = null;
+
+        //Find data types excluded by plugins
+        $this->grav->fireEvent('onDataTypeExcludeFromDataManagerPluginHook');
+
+        $typesIterator = new \FilesystemIterator(DATA_DIR, \FilesystemIterator::SKIP_DOTS);
+        foreach ($typesIterator as $type) {
+            $typeName = $type->getFilename();
+            if ($typeName[0] === '.') {
+                continue;
+            }
+
+            if (!is_dir(DATA_DIR . $typeName)) {
+                continue;
+            }
+
+            $iterator = new \FilesystemIterator(DATA_DIR . $typeName, \FilesystemIterator::SKIP_DOTS);
+            $count = 0;
+            foreach ($iterator as $fileinfo) {
+                if ($fileinfo->getFilename()[0] === '.') {
+                    continue;
+                }
+                $count++;
+            }
+
+            if (isset($this->grav['admin']->dataTypesExcludedFromDataManagerPlugin)) {
+                if (!\in_array($typeName, $this->grav['admin']->dataTypesExcludedFromDataManagerPlugin, true)) {
+                    $types[$typeName] = $count;
+                }
+            } else {
+                $types[$typeName] = $count;
+            }
         }
 
-        return YamlParser::parse($fileInstance->content());
+        return $types;
+    }
+
+    /**
+     * @param array $data
+     * @throws \Exception
+     */
+    protected function downloadCSV(array $data)
+    {
+        $flat_data = [];
+        foreach ($data as $row) {
+            if (is_array($row)) {
+                foreach ($row as $key => $item) {
+                    if (is_array($item)) {
+                        $row[$key] = 'array';
+                    }
+                }
+                $flat_data[] = $row;
+            }
+
+        }
+
+        $csv_data = $this->arrayToCsv($flat_data);
+
+        /** @var File $csv_file */
+        $tmp_dir  = Admin::getTempDir();
+        $tmp_file = uniqid() . '.csv';
+        $tmp      = $tmp_dir . '/data-manager/' . basename($tmp_file);
+
+        Folder::create(dirname($tmp));
+
+        $csv_file = File::instance($tmp_file);
+        $csv_file->save($csv_data);
+        Utils::download($csv_file->filename(), true);
+        exit;
     }
 
     /**
@@ -203,7 +268,7 @@ class DataManagerPlugin extends Plugin
      * @param int $sort_flags
      * @return array
      */
-    public function sortArrayByKey($array, $array_key, $direction = SORT_DESC, $sort_flags = SORT_REGULAR )
+    public function sortArrayByKey($array, $array_key, $direction = SORT_DESC, $sort_flags = SORT_REGULAR)
     {
         $output = [];
 
@@ -226,15 +291,18 @@ class DataManagerPlugin extends Plugin
      * @param array $array
      * @return null|string
      */
-    function arrayToCsv(array &$array)
+    function arrayToCsv(array $array)
     {
-        if (count($array) == 0) {
+        if (count($array) === 0) {
             return null;
         }
         ob_start();
-        $df = fopen("php://output", 'w');
+        $df = fopen('php://output', 'wb');
         fputcsv($df, array_keys(reset($array)));
         foreach ($array as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
             fputcsv($df, array_values($row));
         }
         fclose($df);
