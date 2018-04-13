@@ -2,29 +2,39 @@
     <ul>
         {% for key, item in elements %}
             {% if item is iterable %}
-                <li><strong>{{key|e|capitalize}}</strong>:</li>
+                {% if item[0] and item[0] is not iterable %}
+                <li><strong style="vertical-align: top;">{{ key|replace('_', ' ')|capitalize|e }}:</strong>
+                <span style="display: inline-block;">{{ item|join("<br>\n")|raw }}</span></li>
+                {% else %}
+                <li><strong>{{ key|replace('_', ' ')|capitalize|e }}</strong>:</li>
                 {{ _self.loop(item) }}
+                {% endif %}
             {% else %}
-                <li><strong>{{key|e|capitalize}}</strong>: {{ item|striptags('<br>')|raw }}</li>
+                <li><strong style="vertical-align: top;">{{ key|replace('_', ' ')|capitalize|e }}:</strong> <span style="display: inline-block;">{{ item|striptags('<br>')|replace({"\n": '<br>'})|raw }}</span></li>
             {% endif %}
         {% endfor %}
     </ul>
 {% endmacro %}
 
+{% set data = grav.twig.itemData %}
+
 <h1>
-    {{ config.plugins['data-manager'].types[type].item.title ?: type|e|capitalize ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu }}
+    {{ config.plugins['data-manager'].types[type].item.title ?: type|replace({'_': ' '})|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu|raw }}
 </h1>
 <ul>
-    {% if config.plugins['data-manager'].types[type].item.fields %}
+    {% if data['_data_type'] == 'form' %}
+        <div>Form submitted: {{ data.timestamp|date('m/d/Y \\a\\t g:m:i A') }}</div><br>
+        {% set data = data.content %}
+    {% endif %}
+
+    {% if data is not iterable %}
+        {{ data|raw }}
+    {% elseif config.plugins['data-manager'].types[type].item.fields %}
         {% for key, type in config.plugins['data-manager'].types[type].item.fields %}
+            {% set item = data[key] %}
             <li class="page-item">
                 <div class="row">
-                    <strong>{{type.name|e|capitalize}}</strong>:
-
-                    {% set item = grav.twig.itemData[key] %}
-                    {% if is_object(item) %}
-                        {% set item = array(item) %}
-                    {% endif %}
+                    <strong>{{ type.name|capitalize|e }}</strong>:
 
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
@@ -35,20 +45,15 @@
             </li>
         {% endfor %}
     {% else %}
-        {% for key, type in grav.twig.itemData %}
+        {% for key, item in data %}
             <li class="page-item">
                 <div class="row">
-                    <strong>{{key|capitalize}}</strong>:
-
-                    {% set item = grav.twig.itemData[key] %}
-                    {% if is_object(item) %}
-                        {% set item = array(item) %}
-                    {% endif %}
+                    <strong style="vertical-align: top;">{{ key|replace('_', ' ')|capitalize|e }}:</strong>
 
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
                     {% else %}
-                        {{ item|striptags('<br>')|raw }}
+                        <span style="display: inline-block;">{{ item|striptags('<br>')|replace({"\n": '<br>'})|raw }}</span>
                     {% endif %}
                 </div>
             </li>
