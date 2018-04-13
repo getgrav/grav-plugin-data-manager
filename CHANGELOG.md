@@ -9,6 +9,7 @@
     * Improved layout when viewing individual data item
 1. [](#bugfix)
     * Fixed crash if loading data fails because of bad input (display raw text instead)
+    * Fixed CSV output if the fields of the data has been changed over time
 
 # v1.1.1.0
 ## 04/09/2018

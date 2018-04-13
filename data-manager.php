@@ -58,18 +58,25 @@ class DataManagerPlugin extends Plugin
         $twig = $this->grav['twig'];
         $pathParts = $uri->paths();
         $extension = '.' . $uri->extension();
+        $csv = false;
 
         if (isset($pathParts[1]) && $pathParts[1] === $this->route) {
-            $type = isset($pathParts[2]) ? basename($pathParts[2], '.csv') : null;
-            $file = isset($pathParts[3]) ? $pathParts[3] : null;
-            $ext = $this->getExtension($type, $file);
-            if ($extension && $ext !== $extension) {
-                $filename = $file . $extension;
+            $type = isset($pathParts[2]) ? $pathParts[2] : null;
+            if (preg_match( '/\.csv$/', $type)) {
+                $type = basename($type, '.csv');
+                $file = null;
+                $csv = true;
             } else {
-                $filename = $file;
+                $file = isset($pathParts[3]) ? $pathParts[3] : null;
+                $ext = $this->getExtension($type, $file);
+                if ($extension && $ext !== $extension) {
+                    $filename = $file . $extension;
+                } else {
+                    $filename = $file;
+                }
             }
 
-            if ($file) {
+            if ($file && !$csv) {
                 // Individual data entry.
                 $twig->itemData = $this->getFileContent($type, $filename);
             } elseif ($type) {
@@ -82,7 +89,7 @@ class DataManagerPlugin extends Plugin
         }
 
         // Handle CSV call
-        if (isset($twig->items) && $extension === 'csv') {
+        if (isset($twig->items) && $csv) {
 
             $data = array_column($twig->items, 'content');
 
@@ -214,20 +221,7 @@ class DataManagerPlugin extends Plugin
      */
     protected function downloadCSV(array $data)
     {
-        $flat_data = [];
-        foreach ($data as $row) {
-            if (is_array($row)) {
-                foreach ($row as $key => $item) {
-                    if (is_array($item)) {
-                        $row[$key] = 'array';
-                    }
-                }
-                $flat_data[] = $row;
-            }
-
-        }
-
-        $csv_data = $this->arrayToCsv($flat_data);
+        $csv_data = $this->arrayToCsv($data);
 
         /** @var File $csv_file */
         $tmp_dir  = Admin::getTempDir();
@@ -291,21 +285,74 @@ class DataManagerPlugin extends Plugin
      * @param array $array
      * @return null|string
      */
-    function arrayToCsv(array $array)
+    private function arrayToCsv(array $array)
     {
-        if (count($array) === 0) {
+        $rows = [];
+        foreach ($array as $row) {
+            $row = $this->csvFlatten($row);
+            if ($row) {
+                $rows[] = $row;
+            }
+        }
+
+        if (count($rows) === 0) {
             return null;
         }
+
+        $fields = array_map(function() { return ''; }, call_user_func_array('array_replace', $rows));
+        $values = [];
+        foreach ($rows as $row) {
+            $values[] = array_merge($fields, $row);
+        }
+
         ob_start();
         $df = fopen('php://output', 'wb');
-        fputcsv($df, array_keys(reset($array)));
-        foreach ($array as $row) {
-            if (!is_array($row)) {
-                continue;
-            }
-            fputcsv($df, array_values($row));
+        fputcsv($df, array_keys($fields));
+        foreach ($values as $value) {
+            fputcsv($df, $value);
         }
         fclose($df);
         return ob_get_clean();
+    }
+
+    private function csvFlatten($row)
+    {
+        if (!is_array($row)) {
+            return [];
+        }
+        if (isset($row['_data_type'], $row['content']) && is_array($row['content'])) {
+            return ['timestamp' => $row['timestamp']] + $this->arrayFlatten($row['content']);
+        }
+
+        $flat_data = [];
+        foreach ($row as $key => $item) {
+            if (is_array($item)) {
+                $flat_data[$key] = json_encode($item);
+            } else {
+                $flat_data[$key] = $item;
+            }
+        }
+
+        return $flat_data;
+    }
+
+    /**
+     * Flatten an array
+     *
+     * @param array $array
+     * @param string $prefix
+     * @return array
+     */
+    private function arrayFlatten($array, $prefix = '')
+    {
+        $flatten = [];
+        foreach ($array as $key => $inner) {
+            if (is_array($inner)) {
+                $flatten += $this->arrayFlatten($inner, $prefix . $key . '.');
+            } else {
+                $flatten[$prefix . $key] = $inner;
+            }
+        }
+        return $flatten;
     }
 }
