@@ -64,7 +64,7 @@ class DataManagerPlugin extends Plugin
             $file = isset($pathParts[3]) ? $pathParts[3] : null;
             $ext = $this->getExtension($type, $file);
             if ($extension && $ext !== $extension) {
-                $filename = $file;
+                $filename = $file . $extension;
             } else {
                 $filename = $file;
             }
