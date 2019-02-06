@@ -1,5 +1,5 @@
 <h1>
-    {{ config.plugins['data-manager'].types[type].list.title ?: type|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu|raw }}
+    {{ config.plugins['data-manager'].types[type].list.title|t ?: type|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu|raw }}
 </h1>
 <div class="">
     {% if config.plugins['data-manager'].types[type].list.columns %}
