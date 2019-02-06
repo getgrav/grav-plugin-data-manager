@@ -7,7 +7,7 @@
             <thead>
                 <tr>
                     {% for column in config.plugins['data-manager'].types[type].list.columns %}
-                        <th>{{ column.label|e }}</th>
+                        <th>{{ column.label|e|t }}</th>
                     {% endfor %}
                 </tr>
             </thead>
