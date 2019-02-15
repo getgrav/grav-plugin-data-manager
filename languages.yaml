@@ -37,3 +37,11 @@ ro:
     ITEMS_LIST: Lista de elemente
     ITEMS: Elemente
     ITEM_DETAILS: Detaliile elementelor
+    
+zh:
+  PLUGIN_DATA_MANAGER:
+    DATA_MANAGER: 数据管理
+    DATA_TYPES: 数据类型
+    ITEMS_LIST: 条目列表
+    ITEMS: 条目
+    ITEM_DETAILS: 条目详情 
