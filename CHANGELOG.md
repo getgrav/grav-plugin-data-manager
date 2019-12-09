@@ -1,5 +1,5 @@
 # v1.2.0
-## 04/13//2018
+## 04/13/2018
 
 1. [](#new)
     * Added support for JSON and HTML files
