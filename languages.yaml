@@ -5,6 +5,7 @@ en:
     ITEMS_LIST: Items List
     ITEMS: Items
     ITEM_DETAILS: Item Details
+    DOWNLOAD_AS: Download as
     
 fr:
   PLUGIN_DATA_MANAGER:
