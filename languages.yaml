@@ -37,3 +37,11 @@ ro:
     ITEMS_LIST: Lista de elemente
     ITEMS: Elemente
     ITEM_DETAILS: Detaliile elementelor
+    
+el:
+  PLUGIN_DATA_MANAGER:
+    DATA_MANAGER: Διαχείριση δεδομένων
+    DATA_TYPES: Τύποι δεδομένων
+    ITEMS_LIST: Λίστα στοιχείων
+    ITEMS: Στοιχεία
+    ITEM_DETAILS: Λεπτομέρειες στοιχείου
