@@ -19,7 +19,7 @@
 {% set data = grav.twig.itemData %}
 
 <h1>
-    {{ config.plugins['data-manager'].types[type].item.title ?: type|replace({'_': ' '})|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu|raw }}
+    {{ config.plugins['data-manager'].types[type].name ?: type|replace({'_': ' '})|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu|raw }}
 </h1>
 <ul>
     {% if data['_data_type'] == 'form' %}
