@@ -37,7 +37,7 @@ ro:
     ITEMS_LIST: Lista de elemente
     ITEMS: Elemente
     ITEM_DETAILS: Detaliile elementelor
-    
+
 zh:
   PLUGIN_DATA_MANAGER:
     DATA_MANAGER: 数据管理
@@ -45,3 +45,11 @@ zh:
     ITEMS_LIST: 条目列表
     ITEMS: 条目
     ITEM_DETAILS: 条目详情 
+
+el:
+  PLUGIN_DATA_MANAGER:
+    DATA_MANAGER: Διαχείριση δεδομένων
+    DATA_TYPES: Τύποι δεδομένων
+    ITEMS_LIST: Λίστα στοιχείων
+    ITEMS: Στοιχεία
+    ITEM_DETAILS: Λεπτομέρειες στοιχείου
