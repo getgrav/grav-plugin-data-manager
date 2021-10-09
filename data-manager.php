@@ -50,6 +50,11 @@ class DataManagerPlugin extends Plugin
         /** @var Uri $uri */
         $uri = $this->grav['uri'];
 
+        // Get data path
+        $locator = $this->grav['locator'];
+        $path = $locator->findResource('user-data://', true);
+
+
         if (strpos($uri->path(), $this->config->get('plugins.admin.route') . '/' . $this->route) === false) {
             return;
         }
@@ -78,13 +83,13 @@ class DataManagerPlugin extends Plugin
 
             if ($file && !$csv) {
                 // Individual data entry.
-                $twig->itemData = $this->getFileContent($type, $filename);
+                $twig->itemData = $this->getFileContent($type, $filename, $path);
             } elseif ($type) {
                 // List of data entries.
-                $twig->items = $this->getDataType($type);
+                $twig->items = $this->getDataType($type, $path);
             } else {
                 // List of data types.
-                $twig->types = $this->getDataTypes();
+                $twig->types = $this->getDataTypes($path);
             }
         }
 
@@ -115,21 +120,21 @@ class DataManagerPlugin extends Plugin
      * @param string $filename
      * @return array|string|null
      */
-    private function getFileContent($type, $filename)
+    private function getFileContent($type, $filename, $path)
     {
         $extension = $this->getExtension($type, $filename);
 
         switch ($extension) {
             case '.txt':
             case '.yaml':
-                $file = CompiledYamlFile::instance(DATA_DIR . $type . '/' . $filename);
+                $file = CompiledYamlFile::instance($path . '/' . $type . '/' . $filename);
                 break;
             case '.json':
-                $file = JsonFile::instance(DATA_DIR . $type . '/' . $filename);
+                $file = JsonFile::instance($path . '/' . $type . '/' . $filename);
                 break;
             case '.html':
             default:
-                $file = File::instance(DATA_DIR . $type . '/' . $filename);
+                $file = File::instance($path . '/' . $type . '/' . $filename);
         }
 
         if (!$file->exists()) {
@@ -147,12 +152,12 @@ class DataManagerPlugin extends Plugin
      * @param string $type
      * @return array
      */
-    protected function getDataType($type)
+    protected function getDataType($type, $path)
     {
         $extension = $this->config->get("plugins.data-manager.types.{$type}.file_extension");
 
         $items = [];
-        $fileIterator = new \FilesystemIterator(DATA_DIR . $type, \FilesystemIterator::SKIP_DOTS);
+        $fileIterator = new \FilesystemIterator($path . '/' . $type, \FilesystemIterator::SKIP_DOTS);
         /** @var \FilesystemIterator $entry */
         foreach ($fileIterator as $entry) {
             $file = $entry->getFilename();
@@ -165,7 +170,7 @@ class DataManagerPlugin extends Plugin
             $items[] = [
                 'name' => $name,
                 'route' => $file,
-                'content' => $this->getFileContent($type, $file)
+                'content' => $this->getFileContent($type, $file, $path)
             ];
         }
 
@@ -175,7 +180,7 @@ class DataManagerPlugin extends Plugin
     /**
      * @return array
      */
-    protected function getDataTypes()
+    protected function getDataTypes($path)
     {
         $types = [];
         $entry = null;
@@ -183,18 +188,18 @@ class DataManagerPlugin extends Plugin
         //Find data types excluded by plugins
         $this->grav->fireEvent('onDataTypeExcludeFromDataManagerPluginHook');
 
-        $typesIterator = new \FilesystemIterator(DATA_DIR, \FilesystemIterator::SKIP_DOTS);
+        $typesIterator = new \FilesystemIterator($path, \FilesystemIterator::SKIP_DOTS);
         foreach ($typesIterator as $type) {
             $typeName = $type->getFilename();
             if ($typeName[0] === '.') {
                 continue;
             }
 
-            if (!is_dir(DATA_DIR . $typeName)) {
+            if (!is_dir($path . '/' . $typeName)) {
                 continue;
             }
 
-            $iterator = new \FilesystemIterator(DATA_DIR . $typeName, \FilesystemIterator::SKIP_DOTS);
+            $iterator = new \FilesystemIterator($path . '/' . $typeName, \FilesystemIterator::SKIP_DOTS);
             $count = 0;
             foreach ($iterator as $fileinfo) {
                 if ($fileinfo->getFilename()[0] === '.') {
