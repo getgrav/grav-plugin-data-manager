@@ -1,3 +1,9 @@
+# v1.3.0
+## 10/08/2021
+
+1. [](#improved)
+   1. Support for multi-site and `user-data://` data stream instead of hardcoded `DATA_DIR` [#40](https://github.com/getgrav/grav-plugin-data-manager/pull/40)
+
 # v1.2.0
 ## 04/13/2018
 
