@@ -1,3 +1,7 @@
+{% block stylesheets %}
+    {% do assets.addInlineCss('a.page-edit:visited { color: #77559D }') %}
+{% endblock %}
+
 <h1>
     {{ config.plugins['data-manager'].types[type].list.title|t ?: type|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu|raw }}
 </h1>
