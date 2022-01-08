@@ -3,6 +3,7 @@
 
 1. [](#new)
    * It is now possible to delete items [#41](https://github.com/getgrav/grav-plugin-data-manager/pull/41), [#42](https://github.com/getgrav/grav-plugin-data-manager/pull/42)
+   * Allow CVS even with list customization [#35](https://github.com/getgrav/grav-plugin-data-manager/pull/35)
 
 # v1.3.0
 ## 10/08/2021
