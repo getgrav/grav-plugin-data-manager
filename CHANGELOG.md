@@ -1,3 +1,10 @@
+# v1.4.1
+## 01/08/2022
+
+1. [](#bugfix)
+   * Fixed wrong order of parameters in `implode`, causing redirect to throw exception.
+   * Fixed issue with certain file types not being deletable.
+
 # v1.4.0
 ## 01/08/2022
 
