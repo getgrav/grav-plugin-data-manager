@@ -1,3 +1,9 @@
+# v1.4.0
+## 01/08/2022
+
+1. [](#new)
+   * It is now possible to delete items [#41](https://github.com/getgrav/grav-plugin-data-manager/pull/41), [#42](https://github.com/getgrav/grav-plugin-data-manager/pull/42)
+
 # v1.3.0
 ## 10/08/2021
 
