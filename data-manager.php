@@ -82,6 +82,21 @@ class DataManagerPlugin extends Plugin
             }
 
             if ($file && !$csv) {
+                // handle delete
+                if ($uri->query('delete') !== null) {
+                    $fileObj = new \Grav\Framework\File\File(
+                        sprintf('%s/%s/%s', $path, $type, $filename)
+                    );
+
+                    if ($fileObj) {
+                        $paths = $uri->paths();
+                        array_pop($paths);
+
+                        $fileObj->delete();
+                        $this->grav->redirect(implode($paths, '/'), 301);
+                    }
+                }
+
                 // Individual data entry.
                 $twig->itemData = $this->getFileContent($type, $filename, $path);
             } elseif ($type) {
