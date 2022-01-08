@@ -1,5 +1,9 @@
+{% block stylesheets %}
+    {% do assets.addInlineCss('a.page-edit:visited { color: #77559D }') %}
+{% endblock %}
+
 <h1>
-    {{ config.plugins['data-manager'].types[type].list.title ?: type|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu|raw }}
+    {{ config.plugins['data-manager'].types[type].list.title|t ?: type|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEMS_LIST"|e|tu|raw }}
 </h1>
 <div class="">
     {% if config.plugins['data-manager'].types[type].list.columns %}
@@ -7,7 +11,7 @@
             <thead>
                 <tr>
                     {% for column in config.plugins['data-manager'].types[type].list.columns %}
-                        <th>{{ column.label|e }}</th>
+                        <th>{{ column.label|e|t }}</th>
                     {% endfor %}
                 </tr>
             </thead>
@@ -29,20 +33,34 @@
                                 </a>
                             </td>
                         {% endfor %}
+                        <td class="right">
+                            <a href="{{ type }}/{{ item.route }}?delete" class="error-reverse">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <ul class="">
+        <table class="table">
+            <tbody>
            {% for item in grav.twig.items %}
-               <li class="">
-                   <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.name|e }}</a>
-               </li>
+               <tr>
+                   <td>
+                       <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.name|e }}</a>
+                   </td>
+                   <td class="right">
+                       <a href="{{ type }}/{{ item.route }}?delete" class="error-reverse">
+                           <i class="fa fa-trash"></i>
+                       </a>
+                   </td>
+               </tr>
            {% endfor %}
-        </ul>
-        <div class="button-bar danger">
-        <a href="{{ type }}.csv" class="button">Download as CSV</a>
-        </div>
+            </tbody>
+        </table>
     {% endif %}
+    <div class="button-bar danger">
+      <a href="{{ type }}.csv" class="button">{{ "PLUGIN_DATA_MANAGER.DOWNLOAD_AS"|t }} CSV</a>
+    </div>
 </div>

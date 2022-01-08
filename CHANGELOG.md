@@ -1,3 +1,13 @@
+# v1.4.0
+## 01/08/2022
+
+1. [](#new)
+   * It is now possible to delete items [#41](https://github.com/getgrav/grav-plugin-data-manager/pull/41), [#42](https://github.com/getgrav/grav-plugin-data-manager/pull/42)
+   * Allow CVS even with list customization [#35](https://github.com/getgrav/grav-plugin-data-manager/pull/35)
+   * Mark visited data items to different color [#24](https://github.com/getgrav/grav-plugin-data-manager/pull/24)
+2. [](#bugfix)
+   * Properly store generated CSV files into tmp/cache folder before download, rather than Grav root [#27](https://github.com/getgrav/grav-plugin-data-manager/pull/27)
+
 # v1.3.0
 ## 10/08/2021
 

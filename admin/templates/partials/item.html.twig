@@ -18,9 +18,15 @@
 
 {% set data = grav.twig.itemData %}
 
-<h1>
-    {{ config.plugins['data-manager'].types[type].item.title ?: type|replace({'_': ' '})|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu|raw }}
-</h1>
+<div>
+    <a href="{{ item }}?delete" class="pull-right error-reverse">
+        <i class="fa fa-lg fa-pull-left fa-trash"></i>
+    </a>
+    <h1>
+        {{ config.plugins['data-manager'].types[type].name ?: type|replace({'_': ' '})|capitalize|e ~ " " ~ "PLUGIN_DATA_MANAGER.ITEM_DETAILS"|e|tu|raw }}
+    </h1>
+</div>
+
 <ul>
     {% if data['_data_type'] == 'form' %}
         <div>Form submitted: {{ data.timestamp|date('m/d/Y \\a\\t g:m:i A') }}</div><br>

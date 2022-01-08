@@ -5,6 +5,7 @@ en:
     ITEMS_LIST: Items List
     ITEMS: Items
     ITEM_DETAILS: Item Details
+    DOWNLOAD_AS: Download as
     
 fr:
   PLUGIN_DATA_MANAGER:
@@ -21,7 +22,14 @@ da:
     ITEMS_LIST: Liste over filer
     ITEMS: Filer
     ITEM_DETAILS: Detaljer om fil
-
+ru:
+  PLUGIN_DATA_MANAGER:
+    DATA_MANAGER: Менеджер данных
+    DATA_TYPES: Типы данных
+    ITEMS_LIST: Список элементов
+    ITEMS: Элементы
+    ITEM_DETAILS: Подробнее о элементе
+  
 de:
   PLUGIN_DATA_MANAGER:
     DATA_MANAGER: Datenmanager
@@ -37,3 +45,19 @@ ro:
     ITEMS_LIST: Lista de elemente
     ITEMS: Elemente
     ITEM_DETAILS: Detaliile elementelor
+
+zh:
+  PLUGIN_DATA_MANAGER:
+    DATA_MANAGER: 数据管理
+    DATA_TYPES: 数据类型
+    ITEMS_LIST: 条目列表
+    ITEMS: 条目
+    ITEM_DETAILS: 条目详情 
+
+el:
+  PLUGIN_DATA_MANAGER:
+    DATA_MANAGER: Διαχείριση δεδομένων
+    DATA_TYPES: Τύποι δεδομένων
+    ITEMS_LIST: Λίστα στοιχείων
+    ITEMS: Στοιχεία
+    ITEM_DETAILS: Λεπτομέρειες στοιχείου
