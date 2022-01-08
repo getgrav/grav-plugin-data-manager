@@ -29,18 +29,32 @@
                                 </a>
                             </td>
                         {% endfor %}
+                        <td class="right">
+                            <a href="{{ type }}/{{ item.route }}?delete" class="error-reverse">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% else %}
-        <ul class="">
+        <table class="table">
+            <tbody>
            {% for item in grav.twig.items %}
-               <li class="">
-                   <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.name|e }}</a>
-               </li>
+               <tr>
+                   <td>
+                       <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.name|e }}</a>
+                   </td>
+                   <td class="right">
+                       <a href="{{ type }}/{{ item.route }}?delete" class="error-reverse">
+                           <i class="fa fa-trash"></i>
+                       </a>
+                   </td>
+               </tr>
            {% endfor %}
-        </ul>
+            </tbody>
+        </table>
         <div class="button-bar danger">
         <a href="{{ type }}.csv" class="button">{{ "PLUGIN_DATA_MANAGER.DOWNLOAD_AS"|t }} CSV</a>
         </div>
