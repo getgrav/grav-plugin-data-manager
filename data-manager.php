@@ -84,16 +84,16 @@ class DataManagerPlugin extends Plugin
             if ($file && !$csv) {
                 // handle delete
                 if ($uri->query('delete') !== null) {
-                    $paths = $uri->paths();
-                    array_pop($paths);
-
-                    $redirectPath = implode($paths, '/');
-                    $filePath     = sprintf('%s/%s/%s', $path, $type, $filename);
-                    $fileObj      = new \Grav\Framework\File\File($filePath);
+                    $fileObj = new \Grav\Framework\File\File(
+                        sprintf('%s/%s/%s', $path, $type, $filename)
+                    );
 
                     if ($fileObj) {
+                        $paths = $uri->paths();
+                        array_pop($paths);
+
                         $fileObj->delete();
-                        $this->grav->redirect($redirectPath, 301);
+                        $this->grav->redirect(implode($paths, '/'), 301);
                     }
                 }
 
