@@ -72,7 +72,7 @@ class DataManagerPlugin extends Plugin
                 $file = null;
                 $csv = true;
             } else {
-                $file = isset($pathParts[3]) ? $pathParts[3] : null;
+                $file = isset($pathParts[3]) ? $uri->basename() : null;
                 $ext = $this->getExtension($type, $file);
                 if ($extension && $ext !== $extension) {
                     $filename = $file . $extension;
@@ -93,7 +93,7 @@ class DataManagerPlugin extends Plugin
                         array_pop($paths);
 
                         $fileObj->delete();
-                        $this->grav->redirect(implode($paths, '/'), 301);
+                        $this->grav->redirect(implode('/', $paths), 301);
                     }
                 }
 

@@ -7,7 +7,7 @@
 
     {% if uri.paths[3] %}
         {% set mode = 'item' %}
-        {% set item = uri.paths[3] %}
+        {% set item = uri.basename %}
     {% endif %}
 
 {% endif %}
