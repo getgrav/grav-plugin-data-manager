@@ -248,9 +248,7 @@ class DataManagerPlugin extends Plugin
         $tmp_file = uniqid() . '.csv';
         $tmp      = $tmp_dir . '/data-manager/' . basename($tmp_file);
 
-        Folder::create(dirname($tmp));
-
-        $csv_file = File::instance($tmp_file);
+        $csv_file = File::instance($tmp . '/', $tmp_file);
         $csv_file->save($csv_data);
         Utils::download($csv_file->filename(), true);
         exit;
