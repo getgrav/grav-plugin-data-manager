@@ -55,7 +55,7 @@ class DataManagerPlugin extends Plugin
         $path = $locator->findResource('user-data://', true);
 
 
-        if (strpos($uri->path(), $this->config->get('plugins.admin.route') . '/' . $this->route) === false) {
+        if (strpos((string) $uri->path(), $this->config->get('plugins.admin.route') . '/' . $this->route) === false) {
             return;
         }
 
@@ -67,8 +67,8 @@ class DataManagerPlugin extends Plugin
 
         if (isset($pathParts[1]) && $pathParts[1] === $this->route) {
             $type = isset($pathParts[2]) ? $pathParts[2] : null;
-            if (preg_match( '/\.csv$/', $type)) {
-                $type = basename($type, '.csv');
+            if (preg_match( '/\.csv$/', (string) $type)) {
+                $type = basename((string) $type, '.csv');
                 $file = null;
                 $csv = true;
             } else {
@@ -121,8 +121,8 @@ class DataManagerPlugin extends Plugin
     {
         $extension = $this->config->get("plugins.data-manager.types.{$type}.file_extension");
         if (!$extension) {
-            $pos = strrpos($filename, '.');
-            $extension = $pos ? substr($filename, $pos) : null;
+            $pos = strrpos((string) $filename, '.');
+            $extension = $pos ? substr((string) $filename, $pos) : null;
         }
 
         return $extension;
@@ -176,7 +176,7 @@ class DataManagerPlugin extends Plugin
         /** @var \FilesystemIterator $entry */
         foreach ($fileIterator as $entry) {
             $file = $entry->getFilename();
-            if (!$entry->isFile() || ($extension && !preg_match('/' . preg_quote($extension, '/') . '$/', $file))) {
+            if (!$entry->isFile() || ($extension && !preg_match('/' . preg_quote((string) $extension, '/') . '$/', $file))) {
                 // Is not file or file extension does not match.
                 continue;
             }
