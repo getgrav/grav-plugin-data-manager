@@ -1,3 +1,9 @@
+# v1.4.3
+## 07/02/2026
+
+1. [](#new)
+    * Added full Grav 2.0 / Admin Next support with a tabular data browser, item viewer, delete and CSV export ([#51](https://github.com/getgrav/grav-plugin-data-manager/issues/51)).
+
 # v1.4.2
 ## 04/30/2026
 
