@@ -1,5 +1,5 @@
 name: Data Manager
-version: 1.4.3
+version: 1.4.4
 description: Adds an administration panel to visualize the data
 icon: database
 author:
@@ -13,9 +13,6 @@ license: MIT
 
 compatibility:
   grav: ['1.7', '2.0']
-
-dependencies:
-  - { name: admin, version: '>=1.7.4' }
 
 form:
   validation: loose
