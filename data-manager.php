@@ -1,6 +1,7 @@
 <?php
 namespace Grav\Plugin;
 
+use Composer\Autoload\ClassLoader;
 use Grav\Common\File\CompiledYamlFile;
 use Grav\Common\Filesystem\Folder;
 
@@ -9,8 +10,10 @@ use Grav\Common\Twig\Twig;
 use Grav\Common\Uri;
 use Grav\Common\Utils;
 use Grav\Plugin\Admin\Admin;
+use Grav\Plugin\DataManager\Api\DataManagerApiController;
 use RocketTheme\Toolbox\File\File;
 use RocketTheme\Toolbox\File\JsonFile;
+use RocketTheme\Toolbox\Event\Event;
 
 class DataManagerPlugin extends Plugin
 {
@@ -22,12 +25,30 @@ class DataManagerPlugin extends Plugin
     public static function getSubscribedEvents()
     {
         return [
-            'onPluginsInitialized' => ['onPluginsInitialized', 0],
+            'onPluginsInitialized' => [
+                ['autoload', 100001],
+                ['onPluginsInitialized', 0],
+            ],
+            // Admin-next / API integration (Grav 2.0). These events only fire
+            // during API requests, so they are registered unconditionally —
+            // never gate them on isAdmin() (the AdminProxy isn't registered
+            // yet at onPluginsInitialized time on the API path).
+            'onApiRegisterRoutes' => ['onApiRegisterRoutes', 0],
+            'onApiSidebarItems'   => ['onApiSidebarItems', 0],
+            'onApiPluginPageInfo' => ['onApiPluginPageInfo', 0],
         ];
     }
 
     /**
-     * Enable only if url matches to the configuration.
+     * Composer autoloader for the plugin's own classes.
+     */
+    public function autoload(): ClassLoader
+    {
+        return require __DIR__ . '/vendor/autoload.php';
+    }
+
+    /**
+     * Enable classic-admin (Grav 1.7) integration only when needed.
      */
     public function onPluginsInitialized()
     {
@@ -40,6 +61,62 @@ class DataManagerPlugin extends Plugin
             'onTwigTemplatePaths' => ['onTwigTemplatePaths', 0],
             'onAdminMenu' => ['onAdminMenu', 0],
         ]);
+    }
+
+    // ── Admin-next / API integration ────────────────────────────────────────
+
+    /**
+     * Register the REST routes consumed by the admin-next UI.
+     */
+    public function onApiRegisterRoutes(Event $event): void
+    {
+        $routes = $event['routes'];
+        $controller = DataManagerApiController::class;
+
+        // Static routes first, then more-specific parameterized routes before
+        // the catch-all {type} route (FastRoute matching order).
+        $routes->get('/data-manager/config', [$controller, 'config']);
+        $routes->get('/data-manager/types', [$controller, 'index']);
+        $routes->get('/data-manager/types/{type}/export', [$controller, 'export']);
+        $routes->get('/data-manager/types/{type}/items/{item}', [$controller, 'show']);
+        $routes->delete('/data-manager/types/{type}/items/{item}', [$controller, 'delete']);
+        $routes->get('/data-manager/types/{type}', [$controller, 'items']);
+    }
+
+    /**
+     * Add the Data Manager entry to the admin-next sidebar.
+     */
+    public function onApiSidebarItems(Event $event): void
+    {
+        $items = $event['items'] ?? [];
+        $items[] = [
+            'id'        => 'data-manager',
+            'plugin'    => 'data-manager',
+            'label'     => 'Data Manager',
+            'icon'      => 'fa-database',
+            'route'     => '/plugin/data-manager',
+            'priority'  => 2,
+            'authorize' => 'api.system.read',
+        ];
+        $event['items'] = $items;
+    }
+
+    /**
+     * Describe the admin-next plugin page (custom tabular web component).
+     */
+    public function onApiPluginPageInfo(Event $event): void
+    {
+        if ($event['plugin'] !== 'data-manager') {
+            return;
+        }
+
+        $event['definition'] = [
+            'id'        => 'data-manager',
+            'plugin'    => 'data-manager',
+            'title'     => 'Data Manager',
+            'icon'      => 'fa-database',
+            'page_type' => 'component',
+        ];
     }
 
     /**
