@@ -1,3 +1,9 @@
+# v1.4.4
+## 07/02/2026
+
+1. [](#improved)
+    * Removed the hard `admin` plugin dependency so the plugin installs on Grav 2.0 sites running Admin Next.
+
 # v1.4.3
 ## 07/02/2026
 
