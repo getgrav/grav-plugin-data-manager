@@ -1,0 +1,22 @@
+{
+  "name": "getgrav/grav-plugin-data-manager",
+  "type": "grav-plugin",
+  "description": "Adds an administration panel to visualize the data",
+  "keywords": ["admin", "plugin", "manager", "panel", "data"],
+  "homepage": "https://github.com/getgrav/grav-plugin-data-manager",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Team Grav",
+      "email": "devs@getgrav.org",
+      "homepage": "https://getgrav.org",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Grav\\Plugin\\DataManager\\": "classes/"
+    },
+    "classmap": ["data-manager.php"]
+  }
+}
