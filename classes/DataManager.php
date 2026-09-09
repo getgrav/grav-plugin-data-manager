@@ -464,13 +464,34 @@ class DataManager
 
         ob_start();
         $df = fopen('php://output', 'wb');
-        fputcsv($df, array_keys($fields));
+        fputcsv($df, array_map([$this, 'csvSafeValue'], array_keys($fields)));
         foreach ($values as $value) {
-            fputcsv($df, $value);
+            fputcsv($df, array_map([$this, 'csvSafeValue'], $value));
         }
         fclose($df);
 
         return ob_get_clean();
+    }
+
+    /**
+     * Neutralize spreadsheet formula injection (CWE-1236).
+     *
+     * Excel and LibreOffice evaluate any cell whose value begins with `=`, `+`, `-`
+     * or `@` as a formula, and these files hold anonymous form input, so prefix a
+     * literal quote to keep the value a plain string. The is_numeric() guard leaves
+     * a negative number such as -42 a number rather than turning it into text.
+     * (GHSA-r869-pcgv-prrj)
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function csvSafeValue($value)
+    {
+        if (!is_string($value) || $value === '' || is_numeric($value)) {
+            return $value;
+        }
+
+        return preg_match('/^[\t\r]*[=+\-@]/', $value) ? "'" . $value : $value;
     }
 
     protected function csvFlatten($row): array
