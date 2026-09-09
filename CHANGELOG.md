@@ -1,3 +1,10 @@
+# v1.4.5
+## 09/09/2026
+
+1. [](#improved)
+    * **Form submissions shown in the admin are now escaped.** A submission containing HTML could run script in the browser of the administrator viewing it, which mattered because these entries usually come from anonymous visitors filling in a form. Values with angle brackets now show as plain text rather than being partly stripped. Thanks to @AlpetGexha
+    * **CSV exports no longer let a submitted value act as a spreadsheet formula.** A value starting with `=`, `+`, `-` or `@` was written through unchanged and evaluated when the file was opened. Thanks to @AlpetGexha
+
 # v1.4.4
 ## 07/02/2026
 
