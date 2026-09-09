@@ -4,13 +4,13 @@
             {% if item is iterable %}
                 {% if item[0] and item[0] is not iterable %}
                 <li><strong style="vertical-align: top;">{{ key|replace('_', ' ')|capitalize|e }}:</strong>
-                <span style="display: inline-block;">{{ item|join("<br>\n")|raw }}</span></li>
+                <span style="display: inline-block;">{{ item|join("\n")|e|nl2br }}</span></li>
                 {% else %}
                 <li><strong>{{ key|replace('_', ' ')|capitalize|e }}</strong>:</li>
                 {{ _self.loop(item) }}
                 {% endif %}
             {% else %}
-                <li><strong style="vertical-align: top;">{{ key|replace('_', ' ')|capitalize|e }}:</strong> <span style="display: inline-block;">{{ item|striptags('<br>')|replace({"\n": '<br>'})|raw }}</span></li>
+                <li><strong style="vertical-align: top;">{{ key|replace('_', ' ')|capitalize|e }}:</strong> <span style="display: inline-block;">{{ item|e|nl2br }}</span></li>
             {% endif %}
         {% endfor %}
     </ul>
@@ -34,7 +34,7 @@
     {% endif %}
 
     {% if data is not iterable %}
-        {{ data|raw }}
+        {{ data|e|nl2br }}
     {% elseif config.plugins['data-manager'].types[type].item.fields %}
         {% for key, type in config.plugins['data-manager'].types[type].item.fields %}
             {% set item = data[key] %}
@@ -45,7 +45,7 @@
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
                     {% else %}
-                        {{ item|striptags('<br>')|raw }}
+                        {{ item|e|nl2br }}
                     {% endif %}
                 </div>
             </li>
@@ -59,7 +59,7 @@
                     {% if item is iterable %}
                         {{ _self.loop(item) }}
                     {% else %}
-                        <span style="display: inline-block;">{{ item|striptags('<br>')|replace({"\n": '<br>'})|raw }}</span>
+                        <span style="display: inline-block;">{{ item|e|nl2br }}</span>
                     {% endif %}
                 </div>
             </li>
