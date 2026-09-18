@@ -34,7 +34,7 @@
                             </td>
                         {% endfor %}
                         <td class="right">
-                            <a href="{{ type }}/{{ item.route }}?delete" class="error-reverse">
+                            <a href="{{ uri.addNonce(type ~ '/' ~ item.route ~ '?delete', 'admin-form', 'admin-nonce') }}" class="error-reverse">
                                 <i class="fa fa-trash"></i>
                             </a>
                         </td>
@@ -51,7 +51,7 @@
                        <a href="{{ type }}/{{ item.route }}" class="page-edit">{{ item.name|e }}</a>
                    </td>
                    <td class="right">
-                       <a href="{{ type }}/{{ item.route }}?delete" class="error-reverse">
+                       <a href="{{ uri.addNonce(type ~ '/' ~ item.route ~ '?delete', 'admin-form', 'admin-nonce') }}" class="error-reverse">
                            <i class="fa fa-trash"></i>
                        </a>
                    </td>
