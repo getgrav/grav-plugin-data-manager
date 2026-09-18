@@ -19,7 +19,7 @@
 {% set data = grav.twig.itemData %}
 
 <div>
-    <a href="{{ item }}?delete" class="pull-right error-reverse">
+    <a href="{{ uri.addNonce(item ~ '?delete', 'admin-form', 'admin-nonce') }}" class="pull-right error-reverse">
         <i class="fa fa-lg fa-pull-left fa-trash"></i>
     </a>
     <h1>

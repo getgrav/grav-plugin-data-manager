@@ -126,6 +126,12 @@ class DataManagerPlugin extends Plugin
     {
         /** @var Uri $uri */
         $uri = $this->grav['uri'];
+        $user = $this->grav['user'];
+
+        // Classic Admin page access is enforced later in the request lifecycle.
+        if (!$user->authorize('admin.data-manager') && !$user->authorize('admin.super')) {
+            return;
+        }
 
         // Get data path
         $locator = $this->grav['locator'];
@@ -161,6 +167,11 @@ class DataManagerPlugin extends Plugin
             if ($file && !$csv) {
                 // handle delete
                 if ($uri->query('delete') !== null) {
+                    $nonce = $uri->param('admin-nonce');
+                    if (!$nonce || !Utils::verifyNonce($nonce, 'admin-form')) {
+                        return;
+                    }
+
                     $fileObj = new \Grav\Framework\File\File(
                         sprintf('%s/%s/%s', $path, $type, $filename)
                     );

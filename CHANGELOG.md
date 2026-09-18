@@ -1,3 +1,9 @@
+# v1.4.6
+## 09/17/2026
+
+1. [](#bugfix)
+    * **[security] Deleting a data entry now requires an authorized admin and a valid security token.** The delete handler ran before the admin checked who was asking, so a plain link to `?delete` removed a file under `user/data/` — no login needed, and a logged-in admin could be tricked into deleting an entry by visiting another site. Thanks to @AlpetGexha
+
 # v1.4.5
 ## 09/09/2026
 
